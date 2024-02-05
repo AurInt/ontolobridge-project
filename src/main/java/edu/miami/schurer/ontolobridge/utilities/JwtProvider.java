@@ -1,14 +1,16 @@
 package edu.miami.schurer.ontolobridge.utilities;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import edu.miami.schurer.ontolobridge.models.*;
-
+import javax.crypto.SecretKey;
+import java.security.PublicKey;
 import java.util.Date;
 
 @Component
@@ -26,33 +28,35 @@ public class JwtProvider {
 
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
 
+        SecretKey key = (Jwts.SIG.HS512.key().build());
+
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .subject((userPrincipal.getUsername()))
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpiration))
+                .signWith(key)
+                .content(jwtSecret)
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserNameFromJwtToken(SecretKey token) {
         return Jwts.parser()
+                .verifyWith(token)
                 .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
+                .parseSignedClaims(token)
                 .getBody().getSubject();
     }
     public Date getExpirationFromJWTToken(String token){
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getExpiration();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken) throws SignatureException {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException e) {
-            logger.error("Invalid JWT signature -> Message: {} ", e);
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token -> Message: {}", e);
         } catch (ExpiredJwtException e) {

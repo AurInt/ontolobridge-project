@@ -1,7 +1,7 @@
 package edu.miami.schurer.ontolobridge.utilities;
 
-import edu.miami.schurer.ontolobridge.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.miami.schurer.ontolobridge.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

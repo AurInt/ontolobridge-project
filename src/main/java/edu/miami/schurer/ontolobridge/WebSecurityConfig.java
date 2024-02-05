@@ -1,5 +1,8 @@
 package edu.miami.schurer.ontolobridge;
 
+import edu.miami.schurer.ontolobridge.utilities.AppTokenFilter;
+import edu.miami.schurer.ontolobridge.utilities.JwtAuthTokenFilter;
+import edu.miami.schurer.ontolobridge.utilities.OntoloUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-
-import edu.miami.schurer.ontolobridge.utilities.*;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(

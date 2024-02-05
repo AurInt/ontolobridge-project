@@ -1,16 +1,15 @@
 package edu.miami.schurer.ontolobridge;
 
 import edu.miami.schurer.ontolobridge.Responses.*;
-import edu.miami.schurer.ontolobridge.models.Role;
-import edu.miami.schurer.ontolobridge.utilities.OntoloException;
-import edu.miami.schurer.ontolobridge.utilities.OntoloUserDetailsService;
 import edu.miami.schurer.ontolobridge.models.Detail;
+import edu.miami.schurer.ontolobridge.models.Role;
 import edu.miami.schurer.ontolobridge.models.User;
+import edu.miami.schurer.ontolobridge.utilities.OntoloUserDetailsService;
 import edu.miami.schurer.ontolobridge.utilities.UserPrinciple;
 import io.sentry.Sentry;
 import io.swagger.annotations.*;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -49,22 +48,21 @@ public class UserController extends BaseController {
 
     @PreAuthorize("permitAll()")
     @RequestMapping(path="/request_reset_password", method= RequestMethod.POST, produces={"application/json"})
-    public Object ResetPassword(@ApiParam(value = "User Email") @RequestParam(value="email", defaultValue = "") @NotBlank String email){
+    public Object ResetPassword(@ApiParam(value = "User Email") @RequestParam(value="email", defaultValue = "") @NotEmpty String email){
         User user = userService.findByUserEmail(email);
         if(user != null) {
-            String key = genRandomString(20);
-            user.addDetail(new Detail("reset_key", key));
-            HashMap<String,Object> stringReplace = new HashMap();
-            try{
+            HashMap<String, Object> stringReplace = new HashMap<>();
+            try {
                 email = IOUtils.toString(new ClassPathResource("/emails/passwordReset.email").getInputStream(), "UTF-8");
-            }catch(IOException e){
+            } catch (IOException e) {
                 System.out.println("Email Exception");
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
-            stringReplace.put("user_name",user.getName());
-            stringReplace.put("ontEmail",this.appProp.getsupportEmail());
-            stringReplace.put("reset_url",this.appProp.getSiteURL()+"/reset_password?token="+key);
-            email = notLib.formatMessage(email,stringReplace);
+            stringReplace.put("user_name", user.getName());
+            stringReplace.put("ontEmail", this.appProp.getsupportEmail());
+            String key = genRandomString(32); // Declare and initialize the 'key' variable
+            stringReplace.put("reset_url", this.appProp.getSiteURL() + "/reset_password?token=" + key);
+            email = notLib.formatMessage(email, stringReplace);
             notLib.InsertNotification(JDBCTemplate, "email", user.getEmail(), email, "Ontolobridge - Password Reset Requests");
             userService.saveUser(user);
         }else{
@@ -76,8 +74,8 @@ public class UserController extends BaseController {
     @RequestMapping(path="/reset_password", method= RequestMethod.GET, produces={"application/json"})
     @PreAuthorize("permitAll()")
     public OperationResponse resetPassword(HttpServletRequest r,
-                                           @ApiParam(value = "token") @RequestParam(value="token", defaultValue = "") @NotBlank String token,
-                                           @ApiParam(value = "password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
+                                           @ApiParam(value = "token") @RequestParam(value="token", defaultValue = "") @NotEmpty String token,
+                                           @ApiParam(value = "password") @RequestParam(value="password", defaultValue = "") @NotEmpty String password) {
         Long userID;
         try {
            userID = userService.verifyPasswordReset(token);
@@ -102,7 +100,7 @@ public class UserController extends BaseController {
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
     @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public OperationResponse updatePassword(HttpServletRequest r,
-                                            @ApiParam(value = "User Password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
+                                            @ApiParam(value = "User Password") @RequestParam(value="password", defaultValue = "") @NotEmpty String password) {
         List<Map<String,Object>> allDetails = auth.GetAllDetails();
         List<String> allowedDetails = new ArrayList<>();
         for(Map<String,Object> m: allDetails){ //create whitelist of possible details that can be stored and saved
@@ -119,8 +117,8 @@ public class UserController extends BaseController {
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
     @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object updateDetails(HttpServletRequest r,
-                                           @ApiParam(value = "Field being Changed") @RequestParam(value="fields",defaultValue = "")@NotBlank List<String> Fields,
-                                           @ApiParam(value = "Data being Updated") @RequestParam(value="data", defaultValue = "") @NotBlank List<String> Data) {
+                                           @ApiParam(value = "Field being Changed") @RequestParam(value="fields",defaultValue = "")@NotEmpty List<String> Fields,
+                                           @ApiParam(value = "Data being Updated") @RequestParam(value="data", defaultValue = "") @NotEmpty List<String> Data) {
         List<Map<String,Object>> allDetails = auth.GetAllDetails();
         List<String> allowedDetails = new ArrayList<>();
         for(Map<String,Object> m: allDetails){ //create whitelist of possible details that can be stored and saved
@@ -157,7 +155,6 @@ public class UserController extends BaseController {
                         HttpStatus.BAD_REQUEST);
             }
             user.setPassword(encoder.encode(Data.get(Fields.indexOf("pass1"))));
-            String vCode =genRandomString(10);
             HashMap<String,Object> emailVariables = new HashMap<>();
             notLib.InsertEmail(JDBCTemplate,"/email/passwordChange.email",Data.get(Fields.indexOf("email")),"Your Password Has Changed",emailVariables);
 
@@ -168,7 +165,6 @@ public class UserController extends BaseController {
 
         ArrayList<Detail> details =new ArrayList<>(user.getDetails()); //get details about the user
         for(int i =0;i<Fields.size();i++) { //loop through updates and update whatever is needed.
-            boolean fieldSet = false;
             if(!allowedDetails.contains(Fields.get(i))) //if detail not in whitelist, discard
                 continue;
             for (Detail d : details) {

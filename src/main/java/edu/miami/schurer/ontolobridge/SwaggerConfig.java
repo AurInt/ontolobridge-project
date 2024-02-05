@@ -1,19 +1,20 @@
 package edu.miami.schurer.ontolobridge;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -23,7 +24,6 @@ import javax.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -52,13 +52,26 @@ public class SwaggerConfig extends WebMvcConfigurationSupport{
                     }
                 })
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("edu.miami.schurer.ontolobridge"))
-                .paths(PathSelectors.any())
+                .apis((Predicate<RequestHandler>) RequestHandlerSelectors.basePackage("edu.miami.schurer.ontolobridge"))
+                .paths((Predicate<String>) PathSelectors.any())
                 ;
-        if(!activeProfile.equals("dev")){
-            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/frontend/*"),PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
-        }else{
-            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
+        // ...
+
+                if (!activeProfile.equals("dev")) {
+                    dock = dock.paths(Predicates.not(Predicates.or(
+                        Lists.newArrayList(Predicates.or(
+                            PathSelectors.ant("/frontend/*"),
+                            PathSelectors.ant("/"),
+                            PathSelectors.ant("/csrf")
+                        ))
+                    )));
+                } else {
+            dock = dock.paths(Predicates.not(Predicates.or(
+                Lists.newArrayList(
+                    PathSelectors.ant("/"),
+                    PathSelectors.ant("/csrf")
+                )
+            )));
         }
         return dock.build()
                 .apiInfo(apiInfo())

@@ -1,9 +1,7 @@
 package edu.miami.schurer.ontolobridge.Responses;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 
 @ApiModel(description = "Response returned for all term requests")

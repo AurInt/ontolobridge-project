@@ -2,11 +2,9 @@ package edu.miami.schurer.ontolobridge.utilities;
 
 import edu.miami.schurer.ontolobridge.Responses.StatusResponse;
 import edu.miami.schurer.ontolobridge.models.User;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

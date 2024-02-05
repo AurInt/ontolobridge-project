@@ -1,24 +1,19 @@
 package edu.miami.schurer.ontolobridge;
 
 import edu.miami.schurer.ontolobridge.Responses.JwtResponse;
-import edu.miami.schurer.ontolobridge.Responses.OperationResponse;
-import edu.miami.schurer.ontolobridge.Responses.UserResponse;
-import edu.miami.schurer.ontolobridge.library.UserRepository;
 import edu.miami.schurer.ontolobridge.models.Detail;
 import edu.miami.schurer.ontolobridge.models.Role;
 import edu.miami.schurer.ontolobridge.models.RoleName;
 import edu.miami.schurer.ontolobridge.models.User;
-import edu.miami.schurer.ontolobridge.utilities.JwtProvider;
+import edu.miami.schurer.ontolobridge.utilities.*;
 import io.sentry.Sentry;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,10 +23,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import edu.miami.schurer.ontolobridge.utilities.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.UnexpectedTypeException;
 import java.time.Instant;
 import java.util.*;
 
@@ -96,16 +91,16 @@ public class AuthController extends BaseController {
             notLib.RemoveNotification(JDBCTemplate,notificationID); //We didn't register the user, remove the notification
             StringBuilder output = new StringBuilder();
             output.append("Error Processing Requests:\r\n");
-            for(ConstraintViolation c: e.getConstraintViolations()){
+            for(ConstraintViolation<?> c: e.getConstraintViolations()){
                 output.append(c.getPropertyPath());
                 output.append(c.getMessage());
                 output.append("\r\n");
             }
             return RestResponseExceptionHandler.generateResponse(400,output.toString(),HttpStatus.UNAUTHORIZED);
-        }catch(javax.validation.UnexpectedTypeException e){
+        }catch(UnexpectedTypeException e){
             notLib.RemoveNotification(JDBCTemplate,notificationID); //We didn't register the user, remove the notification
             StringBuilder output = new StringBuilder();
-            Sentry.capture(e);
+            Sentry.captureException(e);
             output.append("Error Processing Requests:\r\n");
             return RestResponseExceptionHandler.generateResponse(400,output.toString(),HttpStatus.UNAUTHORIZED);
         }

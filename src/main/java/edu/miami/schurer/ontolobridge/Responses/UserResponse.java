@@ -5,16 +5,12 @@ import edu.miami.schurer.ontolobridge.models.Detail;
 import edu.miami.schurer.ontolobridge.models.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @ApiModel(description = "Response returned for all term status requests")
 public class UserResponse{

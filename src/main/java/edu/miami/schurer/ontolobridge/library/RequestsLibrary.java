@@ -7,14 +7,12 @@ import edu.miami.schurer.ontolobridge.Responses.FullStatusResponse;
 import edu.miami.schurer.ontolobridge.Responses.MaintainersObject;
 import edu.miami.schurer.ontolobridge.Responses.OperationResponse;
 import edu.miami.schurer.ontolobridge.Responses.StatusResponse;
-import edu.miami.schurer.ontolobridge.models.Ontology;
 import edu.miami.schurer.ontolobridge.utilities.AppProperties;
 import edu.miami.schurer.ontolobridge.utilities.DbUtil;
 import edu.miami.schurer.ontolobridge.utilities.OntoloSecurityService;
 import edu.miami.schurer.ontolobridge.utilities.UserPrinciple;
 import io.sentry.Sentry;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
@@ -22,8 +20,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
@@ -252,7 +250,7 @@ public class RequestsLibrary {
                 stringReplace.put("__ticketID__",id.toString());
             }catch(IOException e){
                 System.out.println("Email Exception");
-                Sentry.capture(e);
+                Sentry.captureException(e);
 
             }
             for (MaintainersObject m : maintainers) {
@@ -262,10 +260,10 @@ public class RequestsLibrary {
             }
             if(submitter_email != null && !submitter.isEmpty() && notify){
                 try{
-                    email = IOUtils.toString(new ClassPathResource("/emails/termSubmission.email").getInputStream(), "UTF-8");
+                    email = IOUtils.toString(new ClassPathResource("/emails/termSubmission.email").getInputStream(), StandardCharsets.UTF_8);
                 }catch(IOException e){
                     System.out.println("Email Exception");
-                    Sentry.capture(e);
+                    Sentry.captureException(e);
                 }
                 stringReplace.put("__user_name__",submitter_email);
                 email = notLib.formatMessage(email,stringReplace);
