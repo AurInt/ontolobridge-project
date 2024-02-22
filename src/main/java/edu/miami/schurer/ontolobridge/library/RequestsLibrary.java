@@ -22,8 +22,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
@@ -37,12 +38,12 @@ public class RequestsLibrary {
 
     JdbcTemplate jdbcTemplate;
 
-    private OntologyManagerService Manager;
+    private final OntologyManagerService Manager;
 
-    private NotifierService notifier;
+    private final NotifierService notifier;
 
-    private AppProperties appProp;
-    private OntoloSecurityService ontoloSecurity;
+    private final AppProperties appProp;
+    private final OntoloSecurityService ontoloSecurity;
 
 
     NotificationLibrary notLib ;
@@ -240,7 +241,7 @@ public class RequestsLibrary {
             String email = "New Ontolobridge Requests Submitted";
             HashMap<String,Object> stringReplace = new HashMap();
             try{
-                email = IOUtils.toString(new ClassPathResource("/emails/termSubmission-Maintainer.email").getInputStream(), "UTF-8");
+                email = IOUtils.toString(new ClassPathResource("/emails/termSubmission-Maintainer.email").getInputStream(), StandardCharsets.UTF_8);
                 stringReplace.put("__label__",label);
                 stringReplace.put("__description__",description);
                 stringReplace.put("__uri_superclass__",uri_superclass);
@@ -262,7 +263,7 @@ public class RequestsLibrary {
             }
             if(submitter_email != null && !submitter.isEmpty() && notify){
                 try{
-                    email = IOUtils.toString(new ClassPathResource("/emails/termSubmission.email").getInputStream(), "UTF-8");
+                    email = IOUtils.toString(new ClassPathResource("/emails/termSubmission.email").getInputStream(), StandardCharsets.UTF_8);
                 }catch(IOException e){
                     System.out.println("Email Exception");
                     Sentry.capture(e);
@@ -384,7 +385,7 @@ public class RequestsLibrary {
             StringBuilder SQL;
             List<String> columns= new ArrayList<>();
             StringBuilder message = new StringBuilder();
-            List<String> current_status = jdbcTemplate.<String>query("SELECT * from requests where id = ?",args.toArray(), (rs, rowNum) -> {
+            List<String> current_status = jdbcTemplate.query("SELECT * from requests where id = ?",args.toArray(), (rs, rowNum) -> {
                 for(int i = 1; i<=rs.getMetaData().getColumnCount(); i++) {
                     columns.add(rs.getMetaData().getColumnName(i));
                 }

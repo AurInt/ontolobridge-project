@@ -13,8 +13,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Null;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.ResultSet;
@@ -97,7 +97,7 @@ public class RetrieveController extends BaseController {
                 if(!outList.contains(o) && (!termMap.containsKey((String)o.get("superclass")) || outList.contains(termMap.get((String)o.get("superclass"))))){
                     if(termMap.containsKey((String)o.get("superclass"))){
                         HashMap p = (HashMap)termMap.get((String)o.get("superclass"));
-                        o.put("superclass_label",(String)p.get("label"));
+                        o.put("superclass_label", p.get("label"));
                     }
                     outList.add(o);
                 }

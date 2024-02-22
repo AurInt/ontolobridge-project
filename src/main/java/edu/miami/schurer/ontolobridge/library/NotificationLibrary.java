@@ -1,15 +1,14 @@
 package edu.miami.schurer.ontolobridge.library;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import edu.miami.schurer.ontolobridge.utilities.AppProperties;
 import edu.miami.schurer.ontolobridge.utilities.DbUtil;
 import io.sentry.Sentry;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 public class NotificationLibrary {
 
-    private AppProperties appProp;
+    private final AppProperties appProp;
 
     public NotificationLibrary(AppProperties appProp) {
         this.appProp = appProp;
@@ -94,7 +93,7 @@ public class NotificationLibrary {
                                 HashMap<String,Object> values){
         String email = "";
         try{
-            email = IOUtils.toString(new ClassPathResource(emailTemplate).getInputStream(), "UTF-8");
+            email = IOUtils.toString(new ClassPathResource(emailTemplate).getInputStream(), StandardCharsets.UTF_8);
         }catch(IOException e){
             System.out.println("Email Exception");
             Sentry.capture(e);

@@ -15,7 +15,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.*;
 
 
@@ -25,7 +25,7 @@ public class OntoloSecurityService {
     AuthLibrary auth;
 
     private Set<String> roles = null;
-    private String defaultRolePrefix = "ROLE_";
+    private final String defaultRolePrefix = "ROLE_";
     private RoleHierarchy roleHierarchy;
 
     @Autowired

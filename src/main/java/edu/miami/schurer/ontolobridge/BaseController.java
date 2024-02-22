@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,8 +197,7 @@ public class BaseController {
                     if (dataMap.get(key) instanceof List || dataMap.get(key) instanceof Map) {
                         dataMap.put(key, cleanData(dataMap.get(key)));
                     }
-                    if (dataMap.get(key) instanceof Array) {
-                        Array newArray = (Array) dataMap.get(key);
+                    if (dataMap.get(key) instanceof Array newArray) {
                         try {
                             dataMap.put(key, newArray.getArray());
                         } catch (Exception e) {
@@ -222,8 +221,7 @@ public class BaseController {
                     if (dataList.get(i) instanceof List ||dataList.get(i) instanceof Map) {
                         dataList.set(i,cleanData(dataList.get(i)));
                     }
-                    if (dataList.get(i) instanceof Array) {
-                        Array newArray = (Array)dataList.get(i);
+                    if (dataList.get(i) instanceof Array newArray) {
                         try {
                             dataList.set(i,newArray.getArray());
                         } catch (Exception e) {

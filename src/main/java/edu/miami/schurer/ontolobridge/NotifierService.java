@@ -1,10 +1,6 @@
 package edu.miami.schurer.ontolobridge;
 
-import com.google.common.collect.Lists;
 import edu.miami.schurer.ontolobridge.Responses.NotificationObject;
-import io.sentry.Sentry;
-import it.ozimov.springboot.mail.model.Email;
-import it.ozimov.springboot.mail.model.defaultimpl.DefaultEmail;
 import it.ozimov.springboot.mail.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.InternetAddress;
-import java.util.HashMap;
 import java.util.List;
 
 @Service

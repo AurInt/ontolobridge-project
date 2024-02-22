@@ -25,8 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
@@ -56,7 +57,7 @@ public class UserController extends BaseController {
             user.addDetail(new Detail("reset_key", key));
             HashMap<String,Object> stringReplace = new HashMap();
             try{
-                email = IOUtils.toString(new ClassPathResource("/emails/passwordReset.email").getInputStream(), "UTF-8");
+                email = IOUtils.toString(new ClassPathResource("/emails/passwordReset.email").getInputStream(), StandardCharsets.UTF_8);
             }catch(IOException e){
                 System.out.println("Email Exception");
                 Sentry.capture(e);
@@ -259,11 +260,11 @@ public class UserController extends BaseController {
     @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
     @RequestMapping(path="/RequestStatus", method= RequestMethod.GET)
     public FullStatusResponse termStatus(@ApiParam(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
-        List<StatusResponse> result = req.TermStatus(new Long(id),"maintainer");
+        List<StatusResponse> result = req.TermStatus(Long.valueOf(id),"maintainer");
         Long userID =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         if(result.size() == 1) {
             StatusResponse requests = result.get(0);
-            if(userService.isOwnerOfRequests(userID,new Long(id)) || userService.isMaintainerOfRequests(userID,new Long(id))){
+            if(userService.isOwnerOfRequests(userID, Long.valueOf(id)) || userService.isMaintainerOfRequests(userID, Long.valueOf(id))){
                 return  (FullStatusResponse)requests;
             }
         }
@@ -275,11 +276,11 @@ public class UserController extends BaseController {
     @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
     @RequestMapping(path="/RequestHistory", method= RequestMethod.GET)
     public List<Map<String,Object>> termHistory(@ApiParam(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
-        List<StatusResponse> result = req.TermStatus(new Long(id),"maintainer");
+        List<StatusResponse> result = req.TermStatus(Long.valueOf(id),"maintainer");
         Long userID =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         if(result.size() == 1) {
             StatusResponse requests = result.get(0);
-            if(userService.isOwnerOfRequests(userID,new Long(id)) || userService.isMaintainerOfRequests(userID,new Long(id))){
+            if(userService.isOwnerOfRequests(userID, Long.valueOf(id)) || userService.isMaintainerOfRequests(userID, Long.valueOf(id))){
                 return  req.TermHistory(requests.request_id);
             }
         }

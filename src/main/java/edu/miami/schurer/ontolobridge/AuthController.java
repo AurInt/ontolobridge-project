@@ -30,8 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import edu.miami.schurer.ontolobridge.utilities.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import java.time.Instant;
 import java.util.*;
 
@@ -70,9 +70,7 @@ public class AuthController extends BaseController {
                        @ApiParam(value = "Anonymize Email") @RequestParam(value="anon",defaultValue = "false") boolean anonymize) throws OntoloException {
 
         if(userService.emailExists(email)) {
-            StringBuilder output = new StringBuilder();
-            output.append("Email already in use\r\n");
-            return RestResponseExceptionHandler.generateResponse(400,output.toString(),HttpStatus.UNAUTHORIZED);
+            return RestResponseExceptionHandler.generateResponse(400, "Email already in use\r\n",HttpStatus.UNAUTHORIZED);
         }
 
         // Creating user's account
@@ -92,7 +90,7 @@ public class AuthController extends BaseController {
 
         try {
             userService.saveUser(user);
-        }catch(javax.validation.ConstraintViolationException e){
+        } catch (jakarta.validation.ConstraintViolationException e) {
             notLib.RemoveNotification(JDBCTemplate,notificationID); //We didn't register the user, remove the notification
             StringBuilder output = new StringBuilder();
             output.append("Error Processing Requests:\r\n");
@@ -102,7 +100,7 @@ public class AuthController extends BaseController {
                 output.append("\r\n");
             }
             return RestResponseExceptionHandler.generateResponse(400,output.toString(),HttpStatus.UNAUTHORIZED);
-        }catch(javax.validation.UnexpectedTypeException e){
+        } catch (jakarta.validation.UnexpectedTypeException e) {
             notLib.RemoveNotification(JDBCTemplate,notificationID); //We didn't register the user, remove the notification
             StringBuilder output = new StringBuilder();
             Sentry.capture(e);
@@ -120,7 +118,7 @@ public class AuthController extends BaseController {
         }catch(EmptyResultDataAccessException e){
             throw new OntoloException("Code not Found",HttpStatus.BAD_REQUEST); //code not found throw error
         }
-        Optional<User> u = userService.findByUserId(new Long(id));
+        Optional<User> u = userService.findByUserId(Long.valueOf(id));
         if(!u.isPresent()){
             throw new OntoloException("User not found",HttpStatus.BAD_REQUEST); //user not found, throw error. SHOULD NEVER HAPPEN
         }

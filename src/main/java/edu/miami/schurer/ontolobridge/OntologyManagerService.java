@@ -18,10 +18,11 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,7 +122,7 @@ public class OntologyManagerService {
                    ontologies.get(item.get("superclass_ontology").toString()).get("seperator").toString()+
                     item.get("superclass_ontology").toString()+
                     "_"+String.format(paddingFormat,
-                    (int)item.get("superclass_id")).replace(' ', '0'), "UTF-8");
+                    item.get("superclass_id")).replace(' ', '0'), StandardCharsets.UTF_8);
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(bioportalAPI).path(queryClass);
             UriComponents components = builder.build(true);
             URI uri = components.toUri();

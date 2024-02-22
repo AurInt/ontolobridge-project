@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Session;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -80,7 +80,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
 
     @Transactional
     public Optional<User> findByUserId(long id){
-        Session session = (Session)entityManager.unwrap(Session.class);
+        Session session = entityManager.unwrap(Session.class);
         Optional<User> u = userRepository.findById(id);
         session.close();
         return u;
@@ -88,7 +88,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
 
     @Transactional @Override
     public User findByUserEmail(String email) {
-        Session session = (Session)entityManager.unwrap(Session.class);
+        Session session = entityManager.unwrap(Session.class);
         Optional<User> u = userRepository.findByEmail(email);
         if(!u.isPresent())
             return null;

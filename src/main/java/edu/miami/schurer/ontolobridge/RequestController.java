@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +183,7 @@ public class RequestController extends BaseController {
         if(activeProfile.equals("prod")){
             include="";
         }
-        List<StatusResponse> result = req.TermStatus(new Long(id),include);
+        List<StatusResponse> result = req.TermStatus(Long.valueOf(id),include);
         if(result.size() == 1)
             return result.get(0);
         return result;

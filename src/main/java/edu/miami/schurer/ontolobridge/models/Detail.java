@@ -1,6 +1,6 @@
 package edu.miami.schurer.ontolobridge.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_details")
