@@ -6,6 +6,8 @@ import edu.miami.schurer.ontolobridge.Responses.RequestResponse;
 import edu.miami.schurer.ontolobridge.models.Ontology;
 import edu.miami.schurer.ontolobridge.utilities.OntoloException;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +32,16 @@ import java.util.*;
 public class RetrieveController extends BaseController {
 
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful requests",response = RequestResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error", response = ExceptionResponse.class)
+            @ApiResponse(responseCode = "200", message = "Successful requests",response = RequestResponse.class),
+            @ApiResponse(responseCode = "500", message = "Internal server error", response = ExceptionResponse.class)
     }
     )
     @RequestMapping(path="/Requests", method= RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken"),@Authorization(value="token") })
-    public @ResponseBody ResponseEntity requestTerm(@ApiParam(value = "Ontology to get new terms for" ,required = true) @RequestParam(value="ontology") String ontology,
-                               @ApiParam(value = "Minimum status to return",defaultValue = " ",required = false) @RequestParam(value="status") String status,
-                               @ApiParam(value = "Type of request to return to return",defaultValue = " ",required = false) @RequestParam(value="type") String type ) throws OntoloException {
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken"),@Authorization(value="token") })
+    public @ResponseBody ResponseEntity requestTerm(@Parameter(value = "Ontology to get new terms for" ,required = true) @RequestParam(value="ontology") String ontology,
+                               @Parameter(value = "Minimum status to return",defaultValue = " ",required = false) @RequestParam(value="status") String status,
+                               @Parameter(value = "Type of request to return to return",defaultValue = " ",required = false) @RequestParam(value="type") String type ) throws OntoloException {
 
         ResponseEntity respEntity = null;
 

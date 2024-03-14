@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class BaseController {
 
     //Named template to allow insertion of array into query in SigCSmallMoleculeLibrary
-    @Autowired
+
     protected JdbcTemplate JDBCTemplate;
 
     @Value("${api.cpanel.apitoken}")
@@ -36,16 +36,13 @@ public class BaseController {
     @Value("${app.general.frontendURL}")
     String frontendURL;
 
-    @Autowired
+
     protected AppProperties appProp;
 
-    @Autowired
     public OntologyManagerService Manager;
 
-    @Autowired
     OntoloSecurityService securityService;
 
-    @Autowired
     public NotifierService notifier;
 
     NotificationLibrary notLib ;
@@ -53,7 +50,6 @@ public class BaseController {
     RequestsLibrary req;
 
 
-    @Autowired
     RoleRepository roleRepository;
 
 

@@ -13,7 +13,6 @@ import java.util.Date;
 
 @Component
 public class JWTRefreshInterceptor {
-    @Autowired
     private JwtProvider tokenProvider;
 
     @Value("${app.jwtSecret}")

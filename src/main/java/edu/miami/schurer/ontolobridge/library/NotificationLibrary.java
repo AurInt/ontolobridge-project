@@ -96,7 +96,7 @@ public class NotificationLibrary {
             email = IOUtils.toString(new ClassPathResource(emailTemplate).getInputStream(), StandardCharsets.UTF_8);
         }catch(IOException e){
             System.out.println("Email Exception");
-            Sentry.capture(e);
+            Sentry.captureException(e);
             return 0;
         }
         try {
@@ -104,7 +104,7 @@ public class NotificationLibrary {
             email = formatMessage(email,values);
         }catch (Exception e){
             System.out.println(e);
-            Sentry.capture(e);
+            Sentry.captureException(e);
         }
         return InsertNotification(jdbcTemplate,"email",address,email,title);
     }

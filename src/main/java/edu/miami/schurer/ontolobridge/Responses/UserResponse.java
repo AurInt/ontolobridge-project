@@ -3,8 +3,7 @@ package edu.miami.schurer.ontolobridge.Responses;
 
 import edu.miami.schurer.ontolobridge.models.Detail;
 import edu.miami.schurer.ontolobridge.models.User;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
@@ -16,22 +15,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ApiModel(description = "Response returned for all term status requests")
+@Schema(description = "Response returned for all term status requests")
 public class UserResponse{
 
-    @ApiModelProperty(required = true, example = "0")
+    @Schema(required = true, example = "0")
     public long user_id;
 
-    @ApiModelProperty(required = true, example = "test")
+    @Schema(required = true, example = "test")
     public String username;
 
-    @ApiModelProperty(required = true, example = "test@example.com")
+    @Schema(required = true, example = "test@example.com")
     public String email;
 
-    @ApiModelProperty(required = true, example = "true")
+    @Schema(required = true, example = "true")
     public boolean verified;
 
-    @ApiModelProperty(required = true, example = "true")
+    @Schema(required = true, example = "true")
     public Map<String,String> details = new HashMap<>();
 
 

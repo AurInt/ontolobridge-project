@@ -1,6 +1,8 @@
 package edu.miami.schurer.ontolobridge.utilities;
 
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,11 @@ import java.io.IOException;
 public class AppTokenFilter extends OncePerRequestFilter {
 
 
-    @Autowired
     private OntoloUserDetailsService userDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(AppTokenFilter.class);
 
-    @Override
+    
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
@@ -37,14 +38,14 @@ public class AppTokenFilter extends OncePerRequestFilter {
                 userDetails.setTokenLogin(true);
                 UsernamePasswordAuthenticationToken authentication
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((jakarta.servlet.http.HttpServletRequest) request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             logger.error("Can NOT set user authentication -> Message: {}", e);
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter((ServletRequest) request, (ServletResponse) response);
     }
 
     private String getToken(HttpServletRequest request) {
@@ -55,5 +56,10 @@ public class AppTokenFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+
+    @Override
+    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
     }
 }

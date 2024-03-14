@@ -30,7 +30,6 @@ import java.util.List;
 @Service
 public class OntologyManagerService {
 
-    @Autowired
     public EmailService emailService;
 
     public NotificationLibrary notLib;
@@ -43,13 +42,13 @@ public class OntologyManagerService {
     private String apiKey;
 
     //Named template to allow insertion of array into query in SigCSmallMoleculeLibrary
-    @Autowired
+
     protected JdbcTemplate JDBCTemplate;
 
-    @Autowired
+
     private AppProperties appProp;
 
-    @Autowired
+
     public OntologyManagerService(){
 
     }
@@ -122,7 +121,7 @@ public class OntologyManagerService {
                    ontologies.get(item.get("superclass_ontology").toString()).get("seperator").toString()+
                     item.get("superclass_ontology").toString()+
                     "_"+String.format(paddingFormat,
-                    item.get("superclass_id")).replace(' ', '0'), StandardCharsets.UTF_8);
+                    item.get("superclass_id")).replace(' ', '0'));
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(bioportalAPI).path(queryClass);
             UriComponents components = builder.build(true);
             URI uri = components.toUri();

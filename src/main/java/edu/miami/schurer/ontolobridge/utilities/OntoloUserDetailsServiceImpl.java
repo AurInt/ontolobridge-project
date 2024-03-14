@@ -28,13 +28,10 @@ import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
 @Service("OntoloUserDetailsServiceImpl")
 public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
 
-    @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
     UserRepository userRepository;
 
-    @Autowired
     PasswordEncoder encoder;
 
     RequestsLibrary req;
@@ -65,7 +62,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
         return hexString.toString();
     }
 
-    @Override
+    
     @Transactional
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
@@ -86,7 +83,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
         return u;
     }
 
-    @Transactional @Override
+    @Transactional 
     public User findByUserEmail(String email) {
         Session session = entityManager.unwrap(Session.class);
         Optional<User> u = userRepository.findByEmail(email);
@@ -172,7 +169,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
                 hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
             }catch (NoSuchAlgorithmException ex){
                 System.out.println("NO SHA256");
-                Sentry.capture(ex);
+                Sentry.captureException(ex);
                 return 0L;
 
             }
@@ -187,7 +184,7 @@ public class OntoloUserDetailsServiceImpl implements OntoloUserDetailsService {
             hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
         }catch (NoSuchAlgorithmException ex){
             System.out.println("NO SHA256");
-            Sentry.capture(ex);
+            Sentry.captureException(ex);
             return 0L;
 
         }

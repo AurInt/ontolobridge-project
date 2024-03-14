@@ -1,45 +1,43 @@
 package edu.miami.schurer.ontolobridge.Responses;
 
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response returned for all term status requests")
+@Schema(description = "Response returned for all term status requests")
 public class FullStatusResponse extends StatusResponse{
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String label;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String description;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String superclass_ontology;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String superclass_id;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String reference;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String justification;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String submitter_email;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     public String submitter;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     int notify;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     List<Map<String,Object>> history;
 
-    @ApiModelProperty( required = true, example = "submitted")
+    @Schema( required = true, example = "submitted")
     int user_id;
 
     public void setHistory(List<Map<String, Object>> history) {

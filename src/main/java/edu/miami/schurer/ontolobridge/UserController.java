@@ -42,15 +42,13 @@ public class UserController extends BaseController {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
-    @Autowired
     private OntoloUserDetailsService userService;
 
-    @Autowired
     PasswordEncoder encoder;
 
     @PreAuthorize("permitAll()")
     @RequestMapping(path="/request_reset_password", method= RequestMethod.POST, produces={"application/json"})
-    public Object ResetPassword(@ApiParam(value = "User Email") @RequestParam(value="email", defaultValue = "") @NotBlank String email){
+    public Object ResetPassword(@Parameter(value = "User Email") @RequestParam(value="email", defaultValue = "") @NotBlank String email){
         User user = userService.findByUserEmail(email);
         if(user != null) {
             String key = genRandomString(20);
@@ -60,7 +58,7 @@ public class UserController extends BaseController {
                 email = IOUtils.toString(new ClassPathResource("/emails/passwordReset.email").getInputStream(), StandardCharsets.UTF_8);
             }catch(IOException e){
                 System.out.println("Email Exception");
-                Sentry.capture(e);
+                Sentry.captureException(e);
             }
             stringReplace.put("user_name",user.getName());
             stringReplace.put("ontEmail",this.appProp.getsupportEmail());
@@ -77,8 +75,8 @@ public class UserController extends BaseController {
     @RequestMapping(path="/reset_password", method= RequestMethod.GET, produces={"application/json"})
     @PreAuthorize("permitAll()")
     public OperationResponse resetPassword(HttpServletRequest r,
-                                           @ApiParam(value = "token") @RequestParam(value="token", defaultValue = "") @NotBlank String token,
-                                           @ApiParam(value = "password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
+                                           @Parameter(value = "token") @RequestParam(value="token", defaultValue = "") @NotBlank String token,
+                                           @Parameter(value = "password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
         Long userID;
         try {
            userID = userService.verifyPasswordReset(token);
@@ -101,9 +99,9 @@ public class UserController extends BaseController {
 
     @RequestMapping(path="/password", method= RequestMethod.POST, produces={"application/json"})
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public OperationResponse updatePassword(HttpServletRequest r,
-                                            @ApiParam(value = "User Password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
+                                            @Parameter(value = "User Password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
         List<Map<String,Object>> allDetails = auth.GetAllDetails();
         List<String> allowedDetails = new ArrayList<>();
         for(Map<String,Object> m: allDetails){ //create whitelist of possible details that can be stored and saved
@@ -118,10 +116,10 @@ public class UserController extends BaseController {
 
     @RequestMapping(path="/details", method= RequestMethod.POST, produces={"application/json"})
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object updateDetails(HttpServletRequest r,
-                                           @ApiParam(value = "Field being Changed") @RequestParam(value="fields",defaultValue = "")@NotBlank List<String> Fields,
-                                           @ApiParam(value = "Data being Updated") @RequestParam(value="data", defaultValue = "") @NotBlank List<String> Data) {
+                                           @Parameter(value = "Field being Changed") @RequestParam(value="fields",defaultValue = "")@NotBlank List<String> Fields,
+                                           @Parameter(value = "Data being Updated") @RequestParam(value="data", defaultValue = "") @NotBlank List<String> Data) {
         List<Map<String,Object>> allDetails = auth.GetAllDetails();
         List<String> allowedDetails = new ArrayList<>();
         for(Map<String,Object> m: allDetails){ //create whitelist of possible details that can be stored and saved
@@ -188,14 +186,14 @@ public class UserController extends BaseController {
 
     @RequestMapping(path="/details", method= RequestMethod.GET, produces={"application/json"})
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public UserResponse GetDetails(){
         User user =  userService.findByUserId(((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId()).get();
         return new UserResponse(user);
     }
 
     @RequestMapping(path="/roles", method= RequestMethod.GET, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object roles(){
         List<String> roles = new ArrayList<>();
         User user =  userService.findByUserId(((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId()).get();
@@ -206,7 +204,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path="/requests", method= RequestMethod.GET, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object GetRequests(){
         Long id =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         return req.TermStatus(id,"user");
@@ -214,7 +212,7 @@ public class UserController extends BaseController {
 
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication) and @OntoloSecurityService.isNotToken(authentication)")
     @RequestMapping(path="/app_token", method= RequestMethod.GET, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken")})
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken")})
     public Object GetAppPasswords(){
         Long id =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         return formatResults(userService.getAppPass(id),"passwords");
@@ -222,7 +220,7 @@ public class UserController extends BaseController {
 
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication) and @OntoloSecurityService.isNotToken(authentication)")
     @RequestMapping(path="/app_token", method= RequestMethod.POST, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object PutAppPasswords(String app, String comment){
         Long id =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         try {
@@ -235,7 +233,7 @@ public class UserController extends BaseController {
 
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication) and @OntoloSecurityService.isNotToken(authentication)")
     @RequestMapping(path="/app_token", method= RequestMethod.DELETE, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public void DeleteAppPasswords(Long id){
         Long user_id =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         userService.deleteAppPass(id,user_id);
@@ -243,7 +241,7 @@ public class UserController extends BaseController {
 
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication) and hasRole(\"ROLE_CURATOR\")")
     @RequestMapping(path="/maintainer_requests", method= RequestMethod.GET, produces={"application/json"})
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object GetMaintainerRequests(){
         Long id =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
 
@@ -252,14 +250,14 @@ public class UserController extends BaseController {
 
 
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful requests",response = StatusResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error", response = ExceptionResponse.class)
+            @ApiResponse(responseCode = 200, message = "Successful requests",response = StatusResponse.class),
+            @ApiResponse(responseCode = 500, message = "Internal server error", response = ExceptionResponse.class)
     }
     )
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication)")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     @RequestMapping(path="/RequestStatus", method= RequestMethod.GET)
-    public FullStatusResponse termStatus(@ApiParam(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
+    public FullStatusResponse termStatus(@Parameter(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
         List<StatusResponse> result = req.TermStatus(Long.valueOf(id),"maintainer");
         Long userID =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         if(result.size() == 1) {
@@ -273,9 +271,9 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isRegistered(authentication)")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     @RequestMapping(path="/RequestHistory", method= RequestMethod.GET)
-    public List<Map<String,Object>> termHistory(@ApiParam(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
+    public List<Map<String,Object>> termHistory(@Parameter(value = "ID of requests",example = "0") @RequestParam(value="requestID") Integer id){
         List<StatusResponse> result = req.TermStatus(Long.valueOf(id),"maintainer");
         Long userID =((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         if(result.size() == 1) {

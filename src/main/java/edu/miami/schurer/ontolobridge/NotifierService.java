@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 public class NotifierService{
 
-    @Autowired
     public EmailService emailService;
 
     //we want to know where we are sending from
@@ -21,10 +20,8 @@ public class NotifierService{
     private String emailHost;
 
     //Named template to allow insertion of array into query in SigCSmallMoleculeLibrary
-    @Autowired
     protected JdbcTemplate JDBCTemplate;
 
-    @Autowired
     public NotifierService(){}
 
     @Scheduled(cron="0 */1 * * * ?")

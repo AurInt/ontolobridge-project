@@ -253,7 +253,7 @@ public class RequestsLibrary {
                 stringReplace.put("__ticketID__",id.toString());
             }catch(IOException e){
                 System.out.println("Email Exception");
-                Sentry.capture(e);
+                Sentry.captureException(e);
 
             }
             for (MaintainersObject m : maintainers) {
@@ -266,7 +266,7 @@ public class RequestsLibrary {
                     email = IOUtils.toString(new ClassPathResource("/emails/termSubmission.email").getInputStream(), StandardCharsets.UTF_8);
                 }catch(IOException e){
                     System.out.println("Email Exception");
-                    Sentry.capture(e);
+                    Sentry.captureException(e);
                 }
                 stringReplace.put("__user_name__",submitter_email);
                 email = notLib.formatMessage(email,stringReplace);

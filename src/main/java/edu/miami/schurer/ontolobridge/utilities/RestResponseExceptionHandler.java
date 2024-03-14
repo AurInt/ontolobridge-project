@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Throwable.class)
     ResponseEntity<Object> handleControllerException(HttpServletRequest req, Throwable ex) {
-        Sentry.capture(ex);
+        Sentry.captureException(ex);
         logger.info("Exception Caught",ex);
         return generateResponse(500,"An Internal Error Has Occurred",HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -33,7 +33,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     ResponseEntity<Object> handleOntoloException(HttpServletRequest req, OntoloException ex) {
         HttpStatus stat = HttpStatus.BAD_REQUEST;
         if(ex.getShouldLog()) { //allow errors to the client due to none server errors
-            Sentry.capture(ex);
+            Sentry.captureException(ex);
             logger.info("Exception Caught", ex);
             stat = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -60,7 +60,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(responseBody,statusCode);
     }
 
-    @Override
+
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String,String> responseBody = new HashMap<>();
         responseBody.put("path",request.getContextPath());

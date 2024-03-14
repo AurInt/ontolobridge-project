@@ -12,6 +12,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @SpringBootApplication
@@ -20,21 +21,20 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
 @EnableCaching
 public class OntolobridgeApplication {
 
-    @Autowired
+
     JWTRefreshInterceptor interceptor;
     public static void main(String[] args) {
         SpringApplication.run(OntolobridgeApplication.class, args);
     }
 
-
     @Bean
     public TaskScheduler taskScheduler() {
-        return new ConcurrentTaskScheduler();
+        return new ConcurrentTaskScheduler(); //single threaded by default
     }
 
     @Bean
     public MappedInterceptor myInterceptor()
     {
-        return new MappedInterceptor(null, interceptor);
+        return new MappedInterceptor(null, (HandlerInterceptor) interceptor);
     }
 }

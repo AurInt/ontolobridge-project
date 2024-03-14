@@ -1,12 +1,12 @@
 package edu.miami.schurer.ontolobridge.Responses;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.sql.Date;
 import java.sql.ResultSet;
 
-@ApiModel(description = "Response returned for all term requests")
+
+@Schema(description = "Response returned for all term requests")
 public class MaintainersObject {
 
     private String ontology_name;

@@ -2,6 +2,11 @@ package edu.miami.schurer.ontolobridge;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.models.OpenAPI;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,15 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.paths.RelativePathProvider;
-import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
 import java.util.Arrays;
@@ -26,45 +22,59 @@ import java.util.HashSet;
 import java.util.List;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurationSupport{
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
 
-
     @Bean
-    public Docket api(ServletContext servletContext)
-
-    {
-        ApiSelectorBuilder dock = new Docket(DocumentationType.SWAGGER_2)
-                .pathProvider(new RelativePathProvider(servletContext) {
-                    @Override
-                    public String getApplicationBasePath() {
-                        String context = System.getProperty("server.servlet.context-path", "/");
-                        if(context.equals("/"))
-                            return "/";
-                        if(activeProfile.equals("prod"))
-                            return "/api";
-                        else
-                            return "/api-test";
-
-                    }
-                })
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("edu.miami.schurer.ontolobridge"))
-                .paths(PathSelectors.any())
-                ;
-        if(!activeProfile.equals("dev")){
-            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/frontend/*"),PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
-        }else{
-            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
-        }
-        return dock.build()
-                .apiInfo(apiInfo())
-                .securitySchemes(Lists.newArrayList(apiToken(),jwtToken()))
-                .produces(new HashSet<String>(Arrays.asList("application/json")));
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder()
+                .group("prod")
+                .pathsToMatch("/api")
+                .build();
     }
+    @Bean
+    public GroupedOpenApi adminApi() {
+        return GroupedOpenApi.builder()
+                .group("server.servlet.context-path")
+                .pathsToMatch("/")
+               // .addOpenApiMethodFilter(method -> method.isAnnotationPresent(Admin.class))
+                .build();
+    }
+//
+//    @Bean
+//    public Docket api(ServletContext servletContext)
+//
+//    {
+//        ApiSelectorBuilder dock = new Docket(DocumentationType.SWAGGER_2)
+//                .pathProvider(new RelativePathProvider(servletContext) {
+//
+//                    public String getApplicationBasePath() {
+//                        String context = System.getProperty("server.servlet.context-path", "/");
+//                        if(context.equals("/"))
+//                            return "/";
+//                        if(activeProfile.equals("prod"))
+//                            return "/api";
+//                        else
+//                            return "/api-test";
+//
+//                    }
+//                })
+//                .select()
+//                .apis(RequestHandlerSelectors.basePackage("edu.miami.schurer.ontolobridge"))
+//                .paths(PathSelectors.any())
+//                ;
+//        if(!activeProfile.equals("dev")){
+//            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/frontend/*"),PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
+//        }else{
+//            dock = dock.paths(Predicates.not(Predicates.or(PathSelectors.ant("/"),PathSelectors.ant("/csrf"))));
+//        }
+//        return dock.build()
+//                .apiInfo(apiInfo())
+//                .securitySchemes(Lists.newArrayList(apiToken(),jwtToken()))
+//                .produces(new HashSet<String>(Arrays.asList("application/json")));
+//    }
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
@@ -84,7 +94,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport{
         return new ApiKey("token", "Authorization", "header");
     }
 
-    @Override
+    
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");

@@ -22,15 +22,14 @@ import edu.miami.schurer.ontolobridge.utilities.*;
 
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
+
     private JwtProvider tokenProvider;
 
-    @Autowired
     private OntoloUserDetailsService userDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);
 
-    @Override
+    
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
@@ -42,7 +41,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

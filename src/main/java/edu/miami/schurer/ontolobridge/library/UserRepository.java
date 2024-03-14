@@ -22,6 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByEmail(String email);
 
-    @Override
+    
     <S extends User> S save(S s);
 }

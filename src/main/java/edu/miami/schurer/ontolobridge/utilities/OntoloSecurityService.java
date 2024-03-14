@@ -28,10 +28,8 @@ public class OntoloSecurityService {
     private final String defaultRolePrefix = "ROLE_";
     private RoleHierarchy roleHierarchy;
 
-    @Autowired
     protected JdbcTemplate JDBCTemplate;
 
-    @Autowired
     UserRepository userRepository;
 
     @PostConstruct

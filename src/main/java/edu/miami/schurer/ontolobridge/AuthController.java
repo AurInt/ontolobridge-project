@@ -41,20 +41,15 @@ import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
 @RequestMapping("/auth")
 public class AuthController extends BaseController {
 
-    @Autowired
     AuthenticationManager authenticationManager;
 
-    @Autowired
     private OntoloUserDetailsService userService;
 
-    @Autowired
     OntoloSecurityService securityService;
 
 
-    @Autowired
     PasswordEncoder encoder;
 
-    @Autowired
     JwtProvider jwtProvider;
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -64,10 +59,10 @@ public class AuthController extends BaseController {
 
     //Redirect the root request to swagger page
     @RequestMapping(path="/register", method= RequestMethod.POST, produces={"application/json"})
-    public Object register(@ApiParam(value = "Email for user") @RequestParam(value="email",defaultValue = "") String email,
-                           @ApiParam(value = "Name for user") @RequestParam(value="name",defaultValue = "") String name,
-                       @ApiParam(value = "pswd") @RequestParam(value="pswd",defaultValue = "")  String pswd,
-                       @ApiParam(value = "Anonymize Email") @RequestParam(value="anon",defaultValue = "false") boolean anonymize) throws OntoloException {
+    public Object register(@Parameter(value = "Email for user") @RequestParam(value="email",defaultValue = "") String email,
+                           @Parameter(value = "Name for user") @RequestParam(value="name",defaultValue = "") String name,
+                       @Parameter(value = "pswd") @RequestParam(value="pswd",defaultValue = "")  String pswd,
+                       @Parameter(value = "Anonymize Email") @RequestParam(value="anon",defaultValue = "false") boolean anonymize) throws OntoloException {
 
         if(userService.emailExists(email)) {
             return RestResponseExceptionHandler.generateResponse(400, "Email already in use\r\n",HttpStatus.UNAUTHORIZED);
@@ -103,7 +98,7 @@ public class AuthController extends BaseController {
         } catch (jakarta.validation.UnexpectedTypeException e) {
             notLib.RemoveNotification(JDBCTemplate,notificationID); //We didn't register the user, remove the notification
             StringBuilder output = new StringBuilder();
-            Sentry.capture(e);
+            Sentry.captureException(e);
             output.append("Error Processing Requests:\r\n");
             return RestResponseExceptionHandler.generateResponse(400,output.toString(),HttpStatus.UNAUTHORIZED);
         }
@@ -111,7 +106,7 @@ public class AuthController extends BaseController {
         return formatResultsWithoutCount("User registered successfully!");
     }
     @RequestMapping(path="/verify", method= RequestMethod.GET, produces={"application/json"})
-    public Object verify(@ApiParam(value = "Value used for Email Verification") @RequestParam(value="verify",defaultValue = "")@NotBlank String verify ) throws OntoloException {
+    public Object verify(@Parameter(value = "Value used for Email Verification") @RequestParam(value="verify",defaultValue = "")@NotBlank String verify ) throws OntoloException {
         Integer id = 0;
         try {
             id = auth.VerifyEmail(verify); //verify the verification code
@@ -138,8 +133,8 @@ public class AuthController extends BaseController {
     }
 
     @RequestMapping(path="/login", method= RequestMethod.POST, produces={"application/json"})
-    public ResponseEntity<?> authenticateUser(@ApiParam(value = "Email for user") @RequestParam(value="email",defaultValue = "")@NotBlank String email,
-                                              @ApiParam(value = "User pswd") @RequestParam(value="pswd",defaultValue = "") @NotBlank String pswd)
+    public ResponseEntity<?> authenticateUser(@Parameter(value = "Email for user") @RequestParam(value="email",defaultValue = "")@NotBlank String email,
+                                              @Parameter(value = "User pswd") @RequestParam(value="pswd",defaultValue = "") @NotBlank String pswd)
             throws OntoloException{
 
         //Sentry.capture(email+";"+pswd);
@@ -177,7 +172,7 @@ public class AuthController extends BaseController {
     }
     @RequestMapping(path="/retrieveMissingDetails", method= RequestMethod.GET, produces={"application/json"})
     @PreAuthorize("isAuthenticated()")
-    @ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
     public Object CheckUserDetails(){
         User user =  userService.findByUserId(((UserPrinciple)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId()).get();
         Set<Detail> details = user.getDetails();
