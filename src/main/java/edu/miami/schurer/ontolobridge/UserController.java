@@ -1,17 +1,19 @@
 package edu.miami.schurer.ontolobridge;
 
 import edu.miami.schurer.ontolobridge.Responses.*;
-import edu.miami.schurer.ontolobridge.models.Role;
-import edu.miami.schurer.ontolobridge.utilities.OntoloException;
-import edu.miami.schurer.ontolobridge.utilities.OntoloUserDetailsService;
 import edu.miami.schurer.ontolobridge.models.Detail;
+import edu.miami.schurer.ontolobridge.models.Role;
 import edu.miami.schurer.ontolobridge.models.User;
+import edu.miami.schurer.ontolobridge.utilities.OntoloUserDetailsService;
 import edu.miami.schurer.ontolobridge.utilities.UserPrinciple;
 import io.sentry.Sentry;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,17 +27,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static edu.miami.schurer.ontolobridge.utilities.DbUtil.genRandomString;
 
-
-@RestController
-@PreAuthorize("isAuthenticated()")
-@RequestMapping("/user")
+// Upgrade required to openAPI https://swagger.io/specification/
+// @RestController
+// @PreAuthorize("isAuthenticated()")
+// @RequestMapping("/user")
 public class UserController extends BaseController {
 
 
@@ -99,7 +100,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(path="/password", method= RequestMethod.POST, produces={"application/json"})
     @PreAuthorize("isAuthenticated() and @OntoloSecurityService.isNotToken(authentication)")
-    @Operation(value = "", authorizations = { @Authorization(value="jwtToken") })
+    @Operation(description = "", Parameter = { name="jwtToken" })
     public OperationResponse updatePassword(HttpServletRequest r,
                                             @Parameter(value = "User Password") @RequestParam(value="password", defaultValue = "") @NotBlank String password) {
         List<Map<String,Object>> allDetails = auth.GetAllDetails();

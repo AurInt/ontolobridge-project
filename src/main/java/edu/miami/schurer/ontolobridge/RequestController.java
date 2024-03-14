@@ -1,14 +1,15 @@
 package edu.miami.schurer.ontolobridge;
 
-import edu.miami.schurer.ontolobridge.Responses.*;
-import edu.miami.schurer.ontolobridge.library.NotificationLibrary;
+import edu.miami.schurer.ontolobridge.Responses.ExceptionResponse;
+import edu.miami.schurer.ontolobridge.Responses.OperationResponse;
+import edu.miami.schurer.ontolobridge.Responses.RequestResponse;
+import edu.miami.schurer.ontolobridge.Responses.StatusResponse;
 import edu.miami.schurer.ontolobridge.utilities.OntoloException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +37,7 @@ public class RequestController extends BaseController {
         }
     )
     @RequestMapping(path="/RequestTerm", method= RequestMethod.POST)
+    // FIXME @Authorization is deprecated, originating from io.swagger.annotations-1.5.20 (switched to io.swagger.v3)
     @Operation(value = "", authorizations = { @Authorization(value="jwtToken"),@Authorization(value="token") })
     public Object requestTerm(@Parameter(value = "Label of suggested term" ,required = true) @RequestParam(value="label") @NotBlank String label,
                               @Parameter(value = "Description of suggested term",required = true) @RequestParam(value="description") @NotBlank String description,
