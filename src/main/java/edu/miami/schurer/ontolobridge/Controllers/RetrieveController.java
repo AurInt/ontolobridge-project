@@ -1,4 +1,4 @@
-package edu.miami.schurer.ontolobridge;
+package edu.miami.schurer.ontolobridge.Controllers;
 
 import com.opencsv.CSVWriter;
 import edu.miami.schurer.ontolobridge.Responses.ExceptionResponse;
@@ -6,6 +6,8 @@ import edu.miami.schurer.ontolobridge.Responses.RequestResponse;
 import edu.miami.schurer.ontolobridge.utilities.OntoloException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpHeaders;
@@ -28,18 +30,20 @@ import java.util.*;
 public class RetrieveController extends BaseController {
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", message = "Successful requests",response = RequestResponse.class),
-            @ApiResponse(responseCode = "500", message = "Internal server error", response = ExceptionResponse.class)
+            @ApiResponse(responseCode = "200", description = "Successful requests",
+                    content = { @Content( schema = @Schema(implementation = RequestResponse.class)) }),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = { @Content( schema = @Schema(implementation = ExceptionResponse.class)) })
     }
     )
     @RequestMapping(path="/Requests", method= RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    @Operation(value = "", authorizations = { @Authorization(value="jwtToken"),@Authorization(value="token") })
-    public @ResponseBody ResponseEntity requestTerm(@Parameter(value = "Ontology to get new terms for" ,required = true) @RequestParam(value="ontology") String ontology,
-                               @Parameter(value = "Minimum status to return",defaultValue = " ",required = false) @RequestParam(value="status") String status,
-                               @Parameter(value = "Type of request to return to return",defaultValue = " ",required = false) @RequestParam(value="type") String type ) throws OntoloException {
+    //@Operation(value = "", authorizations = { @Authorization(value="jwtToken"),@Authorization(value="token") })
+    public @ResponseBody ResponseEntity requestTerm(@Parameter(name = "Ontology to get new terms for" ,required = true) @RequestParam(value="ontology") String ontology,
+                               @Parameter(name = "Minimum status to return", required = false) @RequestParam(value="status") String status,
+                               @Parameter(name = "Type of request to return to return", required = false) @RequestParam(value="type") String type ) throws OntoloException {
 
-        ResponseEntity respEntity = null;
+        //ResponseEntity respEntity = null;
 
 
         String sql = "select label,description,uri_ontology,uri_identifier,uri_superclass,superclass_ontology,superclass_id,superclass_label,current_message,request_type,id from requests where uri_ontology = ? and submission_status != 'rejected'";
@@ -126,8 +130,7 @@ public class RetrieveController extends BaseController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("Content-Type","text/csv");
         responseHeaders.add( "content-disposition", "attachment;filename="+ontology+"-newTerms-"+formatter.format(today)+".csv");
-        respEntity = new ResponseEntity(s.toString(), responseHeaders, HttpStatus.OK);
-        return respEntity;
+        return new ResponseEntity(s.toString(), responseHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(path="/ontologies", method= RequestMethod.GET)

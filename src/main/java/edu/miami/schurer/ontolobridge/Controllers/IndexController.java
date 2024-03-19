@@ -1,9 +1,8 @@
-package edu.miami.schurer.ontolobridge;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+package edu.miami.schurer.ontolobridge.Controllers;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class IndexController {
 

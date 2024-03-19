@@ -1,7 +1,7 @@
 package edu.miami.schurer.ontolobridge.utilities;
 
-import edu.miami.schurer.ontolobridge.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.miami.schurer.ontolobridge.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 public class UserPrinciple implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private String email;
+    private final String email;
 
     private boolean tokenLogin = false;
 
     @JsonIgnore
-    private String password;
+    private final String password;
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public UserPrinciple(Long id, String name, String email, String password,
                          Collection<? extends GrantedAuthority> authorities) {

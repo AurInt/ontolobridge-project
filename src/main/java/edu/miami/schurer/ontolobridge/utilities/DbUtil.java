@@ -4,14 +4,8 @@ package edu.miami.schurer.ontolobridge.utilities;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Objects;
 import java.util.Random;
-
-import org.apache.commons.lang3.StringUtils;
 
 
 @ConfigurationProperties(prefix = "spring.datasource")

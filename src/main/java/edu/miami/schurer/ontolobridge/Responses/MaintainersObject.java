@@ -2,7 +2,6 @@ package edu.miami.schurer.ontolobridge.Responses;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 
 

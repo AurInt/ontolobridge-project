@@ -10,7 +10,7 @@ public class ExceptionResponse {
     public int error;
 
 
-    @Schema( required = true, example = "An Internal Error Has Occured")
+    @Schema( example = "An Internal Error Has Occured")
     public String message;
 
     public ExceptionResponse(String message) {

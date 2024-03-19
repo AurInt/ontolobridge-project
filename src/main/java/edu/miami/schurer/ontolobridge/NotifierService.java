@@ -2,7 +2,6 @@ package edu.miami.schurer.ontolobridge;
 
 import edu.miami.schurer.ontolobridge.Responses.NotificationObject;
 import it.ozimov.springboot.mail.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;

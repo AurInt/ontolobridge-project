@@ -1,5 +1,7 @@
-package edu.miami.schurer.ontolobridge;
+package edu.miami.schurer.ontolobridge.Controllers;
 
+import edu.miami.schurer.ontolobridge.NotifierService;
+import edu.miami.schurer.ontolobridge.OntologyManagerService;
 import edu.miami.schurer.ontolobridge.library.AuthLibrary;
 import edu.miami.schurer.ontolobridge.library.NotificationLibrary;
 import edu.miami.schurer.ontolobridge.library.RequestsLibrary;
@@ -9,13 +11,12 @@ import edu.miami.schurer.ontolobridge.models.RoleName;
 import edu.miami.schurer.ontolobridge.utilities.AppProperties;
 import edu.miami.schurer.ontolobridge.utilities.OntoloException;
 import edu.miami.schurer.ontolobridge.utilities.OntoloSecurityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import jakarta.annotation.PostConstruct;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,6 @@ import java.util.logging.Logger;
 public class BaseController {
 
     //Named template to allow insertion of array into query in SigCSmallMoleculeLibrary
-
     protected JdbcTemplate JDBCTemplate;
 
     @Value("${api.cpanel.apitoken}")
@@ -35,7 +35,6 @@ public class BaseController {
 
     @Value("${app.general.frontendURL}")
     String frontendURL;
-
 
     protected AppProperties appProp;
 

@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import edu.miami.schurer.ontolobridge.models.*;
-
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
@@ -16,40 +15,43 @@ public class JwtProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
-    @Value("${app.jwtSecret}")
-    private String jwtSecret;
-
-    @Value("${app.jwtExpiration}")
+    @Value("${app.jwtExpiration}")      // in millisecond
     private int jwtExpiration;
+    private final Date jwtExpirationTime = new Date((new Date()).getTime() + jwtExpiration);
+    private final static SecretKey key = Jwts.SIG.HS256.key().build();  //https://github.com/jwtk/jjwt?tab=readme-ov-file#creating-safe-keys
 
+    // Logic: generateJwtToken creates a new jwt token using the created SecretKey above,
+    // which is stored to be used for validation (?) below when Jwts.parser is called.
+    // Then when JWTRefreshInterceptor is called, how would the Jwts.parser decrypt using the refresh_key?
     public String generateJwtToken(Authentication authentication) {
 
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
-
-        return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+        return Jwts.builder()       //https://github.com/jwtk/jjwt?tab=readme-ov-file#detached-payload-example
+                .signWith(key)
+                .subject((userPrincipal.getUsername()))
+                .issuedAt(new Date())
+                .expiration(jwtExpirationTime)
                 .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody().getSubject();
+                .verifyWith(key)
+                .build()
+                .parseClaimsJws(jwt)
+                .getSubject();
     }
     public Date getExpirationFromJWTToken(String token){
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody().getExpiration();
+                .verifyWith(key)
+                .parseClaimsJws(token.getToken());
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature -> Message: {} ", e);

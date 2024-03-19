@@ -4,16 +4,12 @@ package edu.miami.schurer.ontolobridge.Responses;
 import edu.miami.schurer.ontolobridge.models.Detail;
 import edu.miami.schurer.ontolobridge.models.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Schema(description = "Response returned for all term status requests")
 public class UserResponse{
@@ -39,9 +35,9 @@ public class UserResponse{
     }
 
     public UserResponse(ResultSet data) throws SQLException {
-        this.user_id = (int)data.getInt("id");
-        this.username = (String)data.getString("email");
-        this.email = (String)data.getString("email");;
+        this.user_id = data.getInt("id");
+        this.username = data.getString("email");
+        this.email = data.getString("email");
         this.verified = data.getBoolean("verified");
     }
     public UserResponse(User user){

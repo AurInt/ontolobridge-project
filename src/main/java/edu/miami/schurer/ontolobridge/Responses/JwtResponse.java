@@ -3,7 +3,7 @@ package edu.miami.schurer.ontolobridge.Responses;
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
-    private String username;
+    private final String username;
     private long id;
 
     public JwtResponse(String accessToken,String username,long id) {

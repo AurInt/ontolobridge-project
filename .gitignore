@@ -29,3 +29,7 @@
 /src/main/resources/application-dev.properties
 /src/main/resources/application-prod.properties
 /application.log
+
+README-private.md
+/client_secret_965989090675-690j9c2f3sgevdt4cke98qpkecaufusf.apps.googleusercontent.com.json
+application.properties
