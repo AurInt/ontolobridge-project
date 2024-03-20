@@ -1,6 +1,5 @@
 package edu.miami.schurer.ontolobridge;
 
-import edu.miami.schurer.ontolobridge.utilities.JWTRefreshInterceptor;
 import it.ozimov.springboot.mail.configuration.EnableEmailTools;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,7 +19,7 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
 @EnableCaching
 public class OntolobridgeApplication extends WebSecurityConfigurerAdapter {
 
-    JWTRefreshInterceptor interceptor;
+//    JWTRefreshInterceptor interceptor;
     public static void main(String[] args) {
 
         SpringApplication.run(OntolobridgeApplication.class, args);
@@ -39,9 +38,5 @@ public class OntolobridgeApplication extends WebSecurityConfigurerAdapter {
                 .oauth2Login();
         // @formatter:on
     }
-    @Bean
-    public MappedInterceptor myInterceptor()
-    {
-        return new MappedInterceptor(null, (HandlerInterceptor) interceptor);
-    }
+
 }

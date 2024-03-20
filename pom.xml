@@ -136,6 +136,10 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
         <!-- Added springdocs to replace old swagger docmentation; see SwaggerConfig.java-->
         <dependency>
             <groupId>org.springdoc</groupId>
